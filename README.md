@@ -36,3 +36,13 @@ This workspace keeps external code and data separate from local experiment tooli
 ## Current Best
 
 `CoOpLoRA-WiSE r4_l8 alpha=0.80` reaches `37.03` OOD macro-F1 on `ood_test`, compared with FLYP with WiSE at `37.10`.
+
+## Kaggle Dual-LoRA Baseline
+
+Standalone Kaggle runner using HuggingFace CLIP ViT-B/16, visual+text LoRA, CE loss, ID/OOD macro-F1 evaluation, WiSE-FT alpha sweep/logit ensemble, tqdm terminal logging, and wandb logging:
+
+```bash
+python scripts/kaggle_dual_lora_iwildcam.py --data-root /kaggle/input/iwildcam-v2/iwildcam_v2.0 --output-dir /kaggle/working/dual_lora_iwildcam --epochs 10 --batch-size 128 --eval-batch-size 256 --wandb-project dg-iwildcam-dual-lora --wandb-mode online
+```
+
+Use `--wandb-mode offline` if Kaggle is not logged in to W&B. The script defaults to `DataParallel` when two T4 GPUs are available.
