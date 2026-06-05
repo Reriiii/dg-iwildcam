@@ -185,11 +185,13 @@ class DualLoRACLIP(nn.Module):
         return {"vision": vision_count, "text": text_count}
 
     def forward(self, pixel_values):
-        image_features = self.clip.get_image_features(pixel_values=pixel_values)
-        text_features = self.clip.get_text_features(
+        vision_outputs = self.clip.vision_model(pixel_values=pixel_values)
+        text_outputs = self.clip.text_model(
             input_ids=self.class_input_ids,
             attention_mask=self.class_attention_mask,
         )
+        image_features = self.clip.visual_projection(vision_outputs.pooler_output)
+        text_features = self.clip.text_projection(text_outputs.pooler_output)
         image_features = F.normalize(image_features.float(), dim=-1)
         text_features = F.normalize(text_features.float(), dim=-1)
         logit_scale = self.clip.logit_scale.exp().float()
